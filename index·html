@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多媒体工作台</title>
+    <!-- PWA 必备 -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi57G75Zyo54mH57G7546vIiwic2hvcnRfbmFtZSI6Iue7uOW8gOWbvSIsImRlc2NyaXB0aW9uIjoi57G75Zyo54mH57G7546v5LiA57G75Yqo5rWL6K+V54mH57G7546v57uP6LWE5rqQIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmY3ZWIiLCJ0aGVtZV9jb2xvciI6IiNmNmJhODciLCJpY29ucyI6W3tic2FuZGVyIjoiNWJjZjUwIiwic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCc+PGNpcmNsZSBjeD0nNTAnIGN5PSc1MCcgcj0nNDUnIGZpbGw9JyNmNmJhODcnLz48dGV4dCB4PSc1MCcgeT0nNTUnIGZvbnQtZmFtaWx5PSJBcmlhbCcgZm9udC1zaXplPSc0MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnPue7uOW8gOWbvTwvdGV4dD48L3N2Zz4ifV19"><link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi57G75Zyo54mH57G7546vIiwic2hvcnRfbmFtZSI6Iue7uOW8gOWbvSIsImRlc2NyaXB0aW9uIjoi57G75Zyo54mH57G7546v5LiA57G75Yqo5rWL6K+V54mH57G7546v57uP6LWE5rqQIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmY3ZWIiLCJ0aGVtZV9jb2xvciI6IiNmNmJhODciLCJpY29ucyI6W3tic2FuZGVyIjoiNWJjZjUwIiwic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCc+PGNpcmNsZSBjeD0nNTAnIGN5PSc1MCcgcj0nNDUnIGZpbGw9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEw
+    <meta name="theme-color" content="#f6ba87">
+    <script src="https://cdn.tailwindcss.com"></script>&lt;b&gt;&lt;script src=&quot;https:&#x2F;&#x2F;cdn.tailwindcss.com&quot;&gt;&lt;&#x2F;script&gt;&lt;&#x2F;b&gt;
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            bg: '#FFF7EB',
+                            card: '#FFEED9',
+                            primary: '#E69A63',
+                            text: '#5C3D2E',
+                            light: '#FFF2E4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .media-card {
+            touch-action: pan-y;
+            position: relative;
+            overflow: hidden;溢出：隐藏；
+        }
+        .note-panel{
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .note-panel.active{
+            transform: translateY(0);
+        }
+        .menu-modal{
+            transform: scale(0.9);变换：缩放(0.9);
+            opacity:0;
+            pointer-events:none;
+            transition: all 0.2s ease;
+        }
+        .menu-modal.active{
+            transform: scale(1);
+            opacity:1;
+            pointer-events:auto;
+        }
+        video{视频{
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-warm-bg text-warm-text min-h-screen">
+    <div class="max-w-2xl mx-auto p-4">
+        <!-- 顶部标题 -->
+        <header class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold text-warm-primary">📷 多媒体工作台</h1>
+            <div class="flex gap-2 flex-wrap justify-end">
+                <button id="installBtn" onclick="installPWA()" class="bg-green-500 text-white px-3 py-2 rounded-xl shadow text-sm hidden">
+                    <i class="fa fa-download"></i>添加到桌面
+                </button>
+                <button onclick="exportBackup()" class="bg-blue-500 text-white px-3 py-2 rounded-xl shadow text-sm">
+                    <i class="fa fa-download"></i>导出备份
+                </button>
+                <button onclick="importBackupClick()" class="bg-blue-500 text-white px-3 py-2 rounded-xl shadow text-sm">
+                    <i class="fa fa-upload"></i>导入备份
+                </button>
+                <input type="file" id="backupFileInput" accept=".json" class="hidden" onchange="importBackup(this)">
+                <button onclick="importMedia()" class="bg-warm-primary text-white px-3 py-2 rounded-xl shadow">
+                    <i class="fa fa-upload mr-1"></i>导入
+                </button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*,video/*" multiple class="hidden">
+        </header>
+
+        <!-- 搜索栏 -->
+        <div class="bg-warm-card rounded-xl p-3 mb-4 shadow flex gap-2 items-center">
+            <i class="fa fa-search text-warm-primary text-lg"></i>
+            <input id="searchInput" oninput="doSearch()" type="text" placeholder="搜索：分组名 / 便签文字"
+                   class="flex-1 bg-white/70 rounded-lg px-3 py-2 outline-none border border-warm-primary/30">
+            <button onclick="clearSearch()" class="text-warm-primary">清空</button>
+        </div>
+
+        <!-- 分组选择区域 -->
+        <div class="bg-warm-card rounded-xl p-4 mb-4 shadow">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-semibold">分组管理</h2>
+                <button onclick="addGroup()" class="text-warm-primary"><i class="fa fa-plus"></i>新建分组</button>
+            </div>
+            <div id="groupList" class="flex flex-wrap gap-2">
+            </div>
+            <div class="mt-3">
+                <p class="text-sm">子分组：</p>
+                <div id="subGroupList" class="flex flex-wrap gap-2 mt-1">
+                </div>
+            </div>
+        </div>
+
+        <!-- 媒体展示区 -->
+        <div id="mediaContainer" class="grid grid-cols-3 gap-3">
+        </div>
+    </div>
+
+    <!-- 底部便签
